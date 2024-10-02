@@ -19,18 +19,22 @@ app.set('views', config.views.dir);
 app.set('view engine', config.views.engine);
 
 // Handle Form Data
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // Static Assets
 app.use(express.static(config.static.dir));
 app.use(express.static(config.thumbnails.dir));
 
 // Session
-app.use(session(config.session));
-app.use(({ session }, res, next) => {
-    res.locals.session = session; // Make session accessible in ejs templates
-    next();
-});
+app.use(session({
+    secret: 'mySecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        httpOnly: false
+    }
+}));
 
 // Flash Messages
 app.use(flash());
@@ -43,13 +47,18 @@ app.use((req, res, next) => {
     next();
 });
 
-// Router Pathes
+// Router Paths
 app.use('/', homeRouter);
 app.use('/', authRouter);
 app.use('/product', productRouter);
 app.use('/cart', cartRouter);
 app.use('/orders', ordersRouter);
 app.use('/admin', adminRouter);
+
+app.use((req, res, next) => {
+    console.log(req.url); 
+    next();
+});
 
 // 404 Handler
 app.use((req, res, next) => {

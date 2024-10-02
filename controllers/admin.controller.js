@@ -31,6 +31,7 @@ exports.postAddProduct = (req, res, next) => {
 exports.getManageOrders = (req, res, next) => {
     let status = req.query.status;
     status == 'all' && (status = undefined);
+
     let promise = req.query.email ?
         usersModel
             .getUser(req.query.email)
